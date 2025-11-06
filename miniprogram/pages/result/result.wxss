@@ -1,0 +1,133 @@
+/* pages/result/result.wxss */
+.container {
+  min-height: 100vh;
+  padding: 40rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.score-section {
+  text-align: center;
+  padding: 60rpx 0;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20rpx;
+  margin-bottom: 30rpx;
+}
+
+.score-label {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 20rpx;
+}
+
+.score-value {
+  font-size: 80rpx;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.recommendation-section,
+.feedback-section,
+.contact-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20rpx;
+  padding: 40rpx;
+  margin-bottom: 30rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 2rpx solid #f0f0f0;
+}
+
+.recommendation-text,
+.feedback-text {
+  font-size: 28rpx;
+  line-height: 1.8;
+  color: #666;
+}
+
+.qrcode-container {
+  text-align: center;
+  padding: 40rpx 0;
+}
+
+.qrcode-image {
+  width: 400rpx;
+  height: 400rpx;
+  margin-bottom: 20rpx;
+}
+
+.qrcode-tip {
+  display: block;
+  font-size: 24rpx;
+  color: #999;
+}
+
+.wechat-id-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30rpx;
+  background: #f9f9f9;
+  border-radius: 12rpx;
+  margin-top: 20rpx;
+}
+
+.wechat-label {
+  font-size: 28rpx;
+  color: #666;
+  margin-right: 10rpx;
+}
+
+.wechat-id {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+  margin-right: 20rpx;
+}
+
+.copy-btn {
+  padding: 10rpx 30rpx;
+  background: #667eea;
+  color: #fff;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  border: none;
+}
+
+.copy-btn::after {
+  border: none;
+}
+
+.action-buttons {
+  margin-top: 40rpx;
+}
+
+.restart-btn {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  background: #fff;
+  color: #667eea;
+  border-radius: 44rpx;
+  font-size: 32rpx;
+  font-weight: bold;
+  border: none;
+}
+
+.restart-btn::after {
+  border: none;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 28rpx;
+  color: #fff;
+}

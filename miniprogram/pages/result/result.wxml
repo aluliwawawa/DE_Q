@@ -1,0 +1,47 @@
+<!--pages/result/result.wxml-->
+<view class="container" wx:if="{{!loading}}">
+  <!-- 总分 -->
+  <view class="score-section">
+    <view class="score-label">您的推荐度得分</view>
+    <view class="score-value">{{totalScore}}</view>
+  </view>
+
+  <!-- 建议文案 -->
+  <view class="recommendation-section">
+    <view class="section-title">评估建议</view>
+    <view class="recommendation-text">{{recommendation.text}}</view>
+  </view>
+
+  <!-- 极端反馈 -->
+  <view class="feedback-section" wx:if="{{extremeFeedback}}">
+    <view class="section-title">个性化反馈</view>
+    <view class="feedback-text">{{extremeFeedback}}</view>
+  </view>
+
+  <!-- 引流内容 -->
+  <view class="contact-section">
+    <view class="section-title">获取更多信息</view>
+    
+    <!-- 公众号二维码 -->
+    <view class="qrcode-container">
+      <image class="qrcode-image" src="{{qrCodeImage}}" mode="aspectFit"></image>
+      <text class="qrcode-tip">长按二维码关注公众号</text>
+    </view>
+
+    <!-- 微信号 -->
+    <view class="wechat-id-container">
+      <text class="wechat-label">微信号：</text>
+      <text class="wechat-id">{{wechatId}}</text>
+      <button class="copy-btn" bindtap="copyWechatId">复制</button>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons">
+    <button class="restart-btn" bindtap="restart">重新答题</button>
+  </view>
+</view>
+
+<view class="loading" wx:else>
+  <text>加载中...</text>
+</view>

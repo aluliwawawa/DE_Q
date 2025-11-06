@@ -1,0 +1,43 @@
+<!--pages/questionnaire/questionnaire.wxml-->
+<view class="container" wx:if="{{!loading}}">
+  <!-- 进度条 -->
+  <view class="progress-container">
+    <view class="progress-bar">
+      <view class="progress-fill" style="width: {{(currentIndex + 1) / questions.length * 100}}%"></view>
+    </view>
+    <text class="progress-text">{{currentIndex + 1}}/{{questions.length}}</text>
+  </view>
+
+  <!-- 题目 -->
+  <view class="question-container">
+    <view class="question-text">{{questions[currentIndex].text}}</view>
+    
+    <!-- 选项 -->
+    <view class="options">
+      <view 
+        class="option-item {{answers[currentIndex] === index + 1 ? 'selected' : ''}}"
+        wx:for="{{[1,2,3,4,5]}}" 
+        wx:key="*this"
+        wx:for-index="index"
+        data-index="{{index}}"
+        bindtap="selectAnswer"
+      >
+        <text class="option-number">{{index + 1}}</text>
+        <text class="option-label">{{item === 1 ? '完全不符合' : item === 2 ? '不太符合' : item === 3 ? '一般' : item === 4 ? '比较符合' : '完全符合'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 导航按钮 -->
+  <view class="nav-buttons">
+    <button 
+      class="nav-btn prev-btn" 
+      disabled="{{currentIndex === 0}}"
+      bindtap="prevQuestion"
+    >上一题</button>
+  </view>
+</view>
+
+<view class="loading" wx:else>
+  <text>加载中...</text>
+</view>

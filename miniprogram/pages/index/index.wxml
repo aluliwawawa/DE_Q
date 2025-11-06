@@ -1,0 +1,17 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <view class="header">
+    <text class="title">德国移居问卷</text>
+    <text class="subtitle">通过回答20道问题，评估您是否适合移居德国</text>
+  </view>
+
+  <view class="content">
+    <text class="description">
+      本问卷将从多个维度评估您对德国移居的准备程度，包括生活成本、工作环境、语言能力、文化适应等方面。
+    </text>
+  </view>
+
+  <view class="footer">
+    <button class="start-btn" bindtap="startQuestionnaire">开始答题</button>
+  </view>
+</view>

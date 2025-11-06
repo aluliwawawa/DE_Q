@@ -1,0 +1,97 @@
+// API请求工具
+const config = require('../config');
+
+function request(url, method = 'GET', data = {}) {
+  return new Promise((resolve, reject) => {
+    const app = getApp();
+    const token = app.globalData.token;
+
+    wx.request({
+      url: config.apiBaseUrl + url,
+      method: method,
+      data: data,
+      header: {
+        'Content-Type': 'application/json',
+        'Authorization': token ? `Bearer ${token}` : ''
+      },
+      success(res) {
+        if (res.statusCode === 200) {
+          if (res.data.code === 0) {
+            resolve(res.data.data);
+          } else {
+            reject(new Error(res.data.message || '请求失败'));
+          }
+        } else {
+          // 对于非200状态码，尝试获取错误信息
+          const errorMsg = res.data?.message || `HTTP ${res.statusCode}`;
+          reject(new Error(errorMsg));
+        }
+      },
+      fail(err) {
+        reject(err);
+      }
+    });
+  });
+}
+
+// 开发模式登录（仅开发环境）
+function devLogin(nickname = '测试用户') {
+  return new Promise((resolve, reject) => {
+    request('/auth/dev/login', 'POST', {
+      nickname: nickname
+    }).then(data => {
+      const app = getApp();
+      app.globalData.token = data.token;
+      app.globalData.userInfo = data.user;
+      app.globalData.isLoggedIn = true;
+      wx.setStorageSync('token', data.token);
+      resolve(data);
+    }).catch(reject);
+  });
+}
+
+// 微信登录
+function wechatLogin() {
+  return new Promise((resolve, reject) => {
+    wx.login({
+      success(res) {
+        if (res.code) {
+          // 获取用户信息
+          wx.getUserProfile({
+            desc: '用于完善用户资料',
+            success(userRes) {
+              // 调用后端登录接口
+              request('/auth/wechat/login', 'POST', {
+                code: res.code,
+                nickname: userRes.userInfo.nickName
+              }).then(data => {
+                const app = getApp();
+                app.globalData.token = data.token;
+                app.globalData.userInfo = data.user;
+                app.globalData.isLoggedIn = true;
+                wx.setStorageSync('token', data.token);
+                resolve(data);
+              }).catch(reject);
+            },
+            fail: reject
+          });
+        } else {
+          reject(new Error('获取code失败'));
+        }
+      },
+      fail: reject
+    });
+  });
+}
+
+// 检查答题权限
+function checkAnswerPermission() {
+  return request('/questionnaire/check-permission', 'GET');
+}
+
+module.exports = {
+  request,
+  devLogin,
+  wechatLogin,
+  checkAnswerPermission
+};
