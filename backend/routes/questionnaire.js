@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('../config/database');
 const authMiddleware = require('../middleware/auth');
 const { checkDailyLimit } = require('../services/scoring');
+const { selectQuestions } = require('../services/questionSelector');
 
 const router = express.Router();
 
@@ -39,25 +40,23 @@ router.get('/current', authMiddleware, async (req, res, next) => {
       });
     }
 
-    // 获取所有启用的题目，按order_num排序
-    const [questions] = await db.query(
-      `SELECT id, question_text, weight, category, order_num 
-       FROM questionnaire 
-       WHERE status = 1 
-       ORDER BY order_num ASC`
-    );
+    // 智能选题：选择30道题
+    const questions = await selectQuestions();
 
     res.json({
       code: 0,
       message: '获取成功',
       data: {
-        questions: questions.map(q => ({
-          id: q.id,
-          text: q.question_text,
-          weight: parseFloat(q.weight),
-          category: q.category,
-          order: q.order_num
-        }))
+        questions: questions.map(q => {
+          // 处理德国格式的逗号小数点
+          const weightStr = String(q.weight).replace(',', '.');
+          return {
+            id: q.id,
+            text: q.q_text,
+            weight: parseFloat(weightStr),
+            category: q.cat
+          };
+        })
       }
     });
   } catch (error) {

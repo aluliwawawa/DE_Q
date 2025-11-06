@@ -43,11 +43,39 @@
   border-bottom: 2rpx solid #f0f0f0;
 }
 
-.recommendation-text,
-.feedback-text {
+.recommendation-text {
   font-size: 28rpx;
   line-height: 1.8;
   color: #666;
+}
+
+.feedback-list {
+  font-size: 28rpx;
+  line-height: 1.8;
+  color: #666;
+}
+
+.feedback-item {
+  margin-bottom: 30rpx;
+}
+
+.feedback-separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 40rpx 0;
+}
+
+.separator-line {
+  flex: 1;
+  height: 1rpx;
+  background: #e0e0e0;
+}
+
+.separator-text {
+  margin: 0 20rpx;
+  font-size: 24rpx;
+  color: #999;
 }
 
 .qrcode-container {

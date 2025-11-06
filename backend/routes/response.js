@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('../config/database');
 const authMiddleware = require('../middleware/auth');
 const { calculateScore, getRecommendation, findExtremeChoices, generateExtremeFeedback, checkDailyLimit } = require('../services/scoring');
+const { selectQuestions } = require('../services/questionSelector');
 
 const router = express.Router();
 
@@ -49,29 +50,18 @@ router.post('/submit', authMiddleware, async (req, res, next) => {
       });
     }
 
-    // 获取所有题目（带重试机制）
+    // 获取题目（使用智能选题，固定30题）
     let questions;
     try {
-      [questions] = await db.query(
-        `SELECT id, question_text, weight, category, order_num 
-         FROM questionnaire 
-         WHERE status = 1 
-         ORDER BY order_num ASC`
-      );
+      questions = await selectQuestions();
     } catch (err) {
       if (err.code === 'ECONNRESET' || err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'ETIMEDOUT') {
         // 重试最多3次
         let retries = 3;
         while (retries > 0) {
           try {
-            // 重试中...
             await new Promise(resolve => setTimeout(resolve, 1000));
-            [questions] = await db.query(
-              `SELECT id, question_text, weight, category, order_num 
-               FROM questionnaire 
-               WHERE status = 1 
-               ORDER BY order_num ASC`
-            );
+            questions = await selectQuestions();
             break; // 成功则跳出循环
           } catch (retryErr) {
             retries--;
@@ -85,11 +75,11 @@ router.post('/submit', authMiddleware, async (req, res, next) => {
       }
     }
 
-    // 验证答题完整性
-    if (answers.length !== questions.length) {
+    // 验证答题完整性（固定30题）
+    if (answers.length !== 30) {
       return res.status(400).json({
         code: 400,
-        message: `请回答所有${questions.length}道题目`,
+        message: '请回答所有30道题目',
         data: null
       });
     }

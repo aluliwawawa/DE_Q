@@ -16,7 +16,7 @@ DE/
 ├── miniprogram/         # 微信小程序前端
 ├── database/            # 数据库脚本
 │   ├── schema.sql      # 数据库表结构
-│   └── demo_data.sql   # Demo数据（20道题目）
+│   └── demo_data.sql   # Demo数据（题库数据）
 ├── TECHNICAL_PLAN.md    # 技术方案文档
 └── README.md           # 项目说明
 ```
@@ -24,13 +24,15 @@ DE/
 ## 功能特性
 
 - ✅ 微信登录授权（获取openid和昵称）
-- ✅ 20道1-5分符合度选择题
+- ✅ 智能选题系统（固定30题，保证权重分布和类别覆盖）
 - ✅ 自动评分计算（权重×选项值）
 - ✅ 基于总分区间的建议文案
 - ✅ 极端属性识别和定制反馈（选择1或5的题目）
 - ✅ 每日答题限制（每个openid每天只能答一次）
 - ✅ 答题进度条显示
 - ✅ 结果页引流内容（公众号二维码+微信号）
+
+> 📊 **评分系统说明**：详细算法和计算逻辑请查看 `database/SCORING_SYSTEM.md`（该文件位于 gitignore 目录，不会上传到仓库）
 
 ## 技术栈
 
@@ -58,7 +60,7 @@ DE/
 # 创建数据库并导入表结构
 mysql -u root -p < database/schema.sql
 
-# 导入demo数据（20道题目）
+# 导入demo数据（题库数据）
 mysql -u root -p < database/demo_data.sql
 ```
 
@@ -77,7 +79,7 @@ cp .env.example .env
 # 编辑.env文件，配置以下信息：
 # - DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME
 # - WECHAT_APPID, WECHAT_APPSECRET
-# - JWT_SECRET unten
+# - JWT_SECRET
 # - PUBLIC_ACCOUNT_WECHAT_ID
 ```
 
@@ -118,7 +120,7 @@ npm start
 ### 主要表结构
 
 - `users` - 用户表（openid、昵称）
-- `questionnaire` - 问卷题目表（20道题目）
+- `questionnaire` - 问卷题目表（题库，每次智能选择30道题）
 - `responses` - 答题记录表
 - `score_rules` - 评分规则表（区间规则、极端反馈规则）
 
@@ -136,9 +138,20 @@ npm start
 - `rule_type = 'score_interval'` - 总分区间规则
 - `rule_type = 'extreme_feedback'` - 极端反馈规则
 
-### 修改权重和category
+### 修改权重和类别
 
-在 `questionnaire` 表中修改对应题目的 `weight` 和 `category` 字段。
+在 `questionnaire` 表中修改对应题目的 `weight` 和 `cat` 字段。
+
+### 题库异常处理
+
+系统会在选题前自动验证题库是否符合要求：
+- **权重分布验证**：确保 `weight=-1` 至少5题，`weight=1` 至少10题，`weight=1.5` 至少10题，`weight=2` 至少5题
+- **类别覆盖验证**：确保每个 `cat` 至少3题
+- **选题结果验证**：确保能够成功选出30题
+
+如果题库不符合要求，系统会：
+1. 后端抛出错误："题库异常，请联系作者检查"（包含详细错误信息）
+2. 前端显示简单提示："题库异常，请联系作者检查"并自动跳转主页
 
 ## 部署到服务器
 

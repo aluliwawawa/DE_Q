@@ -6,7 +6,10 @@ function calculateScore(answers, questions) {
   for (const answer of answers) {
     const question = questions.find(q => q.id === answer.question_id);
     if (question) {
-      totalScore += parseFloat(question.weight) * answer.answer;
+      // 处理德国格式的逗号小数点
+      const weightStr = String(question.weight).replace(',', '.');
+      const weight = parseFloat(weightStr);
+      totalScore += weight * answer.answer;
     }
   }
   return Math.round(totalScore * 100) / 100; // 保留两位小数
@@ -103,7 +106,7 @@ function findExtremeChoices(answers, questions) {
         extremes.push({
           question_id: answer.question_id,
           answer: answer.answer,
-          category: question.category
+          category: question.cat
         });
       }
     }
@@ -207,7 +210,8 @@ async function generateExtremeFeedback(extremeChoices) {
     }
   }
 
-  return feedbacks.join(' ');
+  // 使用特殊分隔符连接多个反馈，便于前端分割显示
+  return feedbacks.join(' ||| ');
 }
 
 // 检查每日答题限制（带重试机制）

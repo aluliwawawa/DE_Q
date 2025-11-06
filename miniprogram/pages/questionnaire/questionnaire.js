@@ -31,13 +31,28 @@ Page({
       })
       .catch(err => {
         wx.hideLoading();
-        wx.showToast({
-          title: err.message || '加载失败',
-          icon: 'none'
-        });
-        setTimeout(() => {
-          wx.navigateBack();
-        }, 1500);
+        // 检查是否是题库异常错误
+        if (err.message && err.message.includes('题库异常')) {
+          wx.showToast({
+            title: '题库异常，请联系作者检查',
+            icon: 'none',
+            duration: 3000
+          });
+          setTimeout(() => {
+            // 跳转到主页
+            wx.reLaunch({
+              url: '/pages/index/index'
+            });
+          }, 1500);
+        } else {
+          wx.showToast({
+            title: err.message || '加载失败',
+            icon: 'none'
+          });
+          setTimeout(() => {
+            wx.navigateBack();
+          }, 1500);
+        }
       });
   },
 
@@ -116,10 +131,25 @@ Page({
       })
       .catch(err => {
         wx.hideLoading();
-        wx.showToast({
-          title: err.message || '提交失败',
-          icon: 'none'
-        });
+        // 检查是否是题库异常错误
+        if (err.message && err.message.includes('题库异常')) {
+          wx.showToast({
+            title: '题库异常，请联系作者检查',
+            icon: 'none',
+            duration: 3000
+          });
+          setTimeout(() => {
+            // 跳转到主页
+            wx.reLaunch({
+              url: '/pages/index/index'
+            });
+          }, 1500);
+        } else {
+          wx.showToast({
+            title: err.message || '提交失败',
+            icon: 'none'
+          });
+        }
       });
   },
 

@@ -13,9 +13,18 @@
   </view>
 
   <!-- 极端反馈 -->
-  <view class="feedback-section" wx:if="{{extremeFeedback}}">
+  <view class="feedback-section" wx:if="{{extremeFeedbackList.length > 0}}">
     <view class="section-title">个性化反馈</view>
-    <view class="feedback-text">{{extremeFeedback}}</view>
+    <view class="feedback-list">
+      <block wx:for="{{extremeFeedbackList}}" wx:key="index">
+        <view class="feedback-item">{{item}}</view>
+        <view class="feedback-separator" wx:if="{{index < extremeFeedbackList.length - 1}}">
+          <view class="separator-line"></view>
+          <text class="separator-text">还有</text>
+          <view class="separator-line"></view>
+        </view>
+      </block>
+    </view>
   </view>
 
   <!-- 引流内容 -->
