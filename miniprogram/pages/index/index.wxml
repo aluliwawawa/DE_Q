@@ -1,21 +1,21 @@
 <!--pages/index/index.wxml-->
 <view class="container">
   <view class="header">
-    <text class="title">👀你，适合来德国长居工作吗？</text>
-    <text class="subtitle">结合资深留德华的经验，评评你是否适合来德国生活</text>
+    <text class="title">👀你，适合来德国生活工作吗？</text>
+    <text class="subtitle">资深留德华设计测评，看看你的德国生活指数</text>
   </view>
 
   <view class="content">
     <text class="description">
-      题目会涵盖社交、文化、职场等多个生活方面，请你根据符合程度在1-5分间选择。
+      题目涵盖社交、文化、职场等多个生活方面，请你根据符合程度在1-5分间选择。
     </text>
     <view class="description-spacer"></view>
     <text class="description">
-      题库保持更新，每次答题将从中动态抽选30题。同时默认每天只能回答一次，请认真作答哦。
+      题库保持更新，每次答题将从中动态抽选30题。默认每人只能免费回答两次，所以请认真作答哦。
     </text>
   </view>
 
   <view class="footer">
-    <button class="start-btn" bindtap="startQuestionnaire">开始答题</button>
+    <button class="start-btn" bindtap="startQuestionnaire">开始测试</button>
   </view>
 </view>

@@ -78,6 +78,7 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`服务器运行在端口 ${PORT}`);
+const HOST = process.env.HOST || '0.0.0.0'; // 监听所有网络接口，允许真机调试访问
+app.listen(PORT, HOST, () => {
+  console.log(`服务器运行在 http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`);
 });

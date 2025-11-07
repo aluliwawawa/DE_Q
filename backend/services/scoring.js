@@ -361,7 +361,7 @@ async function checkAnswerLimit(openid, userId) {
   }
 
   const user = users[0];
-  const totalQuota = (user.answer_quota || 1) + (user.extra_quota || 0);
+  const totalQuota = (user.answer_quota || 2) + (user.extra_quota || 0);
   const remaining = totalQuota - (user.used_quota || 0);
   
   return {
