@@ -1,27 +1,14 @@
 const db = require('../config/database');
 
-/**
- * 标准化weight格式
- * 处理德国格式的逗号小数点（如 "1,50" -> "1.5"）
- * 将逗号替换为点号，转换为数字，再转回字符串标准化
- */
+// 标准化weight格式，处理德国格式的逗号小数点
 function normalizeWeight(weight) {
-  // 将逗号替换为点号，转换为数字，再转回字符串
-  // 这样 "1,50" -> 1.5 -> "1.5", "1,00" -> 1 -> "1", "-1,00" -> -1 -> "-1"
   const weightStr = String(weight).replace(',', '.');
   const weightNum = parseFloat(weightStr);
   return String(weightNum);
 }
 
-/**
- * 智能选题函数
- * 从题库中选择30道题，满足：
- * 1. 每个category至少3题
- * 2. 固定权重分布：5题(-1) + 10题(1) + 10题(1.5) + 5题(2)
- * 3. 随机乱序
- */
+// 智能选题：固定30题，权重分布：5题(-1) + 10题(1) + 10题(1.5) + 5题(2)，每个category至少3题
 async function selectQuestions() {
-  // 获取所有启用的题目
   const [allQuestions] = await db.query(
     `SELECT id, q_text, weight, cat, cat_CN 
      FROM questionnaire 
@@ -32,7 +19,6 @@ async function selectQuestions() {
     throw new Error('题库中没有启用的题目');
   }
 
-  // 按category分组
   const byCategory = {};
   allQuestions.forEach(q => {
     const cat = q.cat;
@@ -42,7 +28,6 @@ async function selectQuestions() {
     byCategory[cat].push(q);
   });
 
-  // 按weight分组
   const byWeight = {
     '-1': [],
     '1': [],
@@ -50,14 +35,12 @@ async function selectQuestions() {
     '2': []
   };
   allQuestions.forEach(q => {
-    // 标准化weight格式（处理德国格式的逗号小数点）
     const weight = normalizeWeight(q.weight);
     if (byWeight[weight]) {
       byWeight[weight].push(q);
     }
   });
 
-  // 目标分布
   const targetDistribution = {
     '-1': 5,
     '1': 10,
@@ -65,8 +48,6 @@ async function selectQuestions() {
     '2': 5
   };
 
-  // 验证题库是否满足选题标准
-  // 1. 检查每个weight的题目数量是否足够
   const weightErrors = [];
   if (byWeight['-1'].length < 5) {
     weightErrors.push(`weight=-1的题目不足5题（当前${byWeight['-1'].length}题）`);
@@ -81,7 +62,6 @@ async function selectQuestions() {
     weightErrors.push(`weight=2的题目不足5题（当前${byWeight['2'].length}题）`);
   }
 
-  // 2. 检查每个category的题目数量是否至少3题
   const categoryErrors = [];
   Object.keys(byCategory).forEach(cat => {
     if (byCategory[cat].length < 3) {
@@ -89,7 +69,6 @@ async function selectQuestions() {
     }
   });
 
-  // 3. 如果验证失败，抛出错误
   if (weightErrors.length > 0 || categoryErrors.length > 0) {
     const errorDetails = [];
     if (weightErrors.length > 0) {
@@ -113,16 +92,13 @@ async function selectQuestions() {
   // 第一步：每个category至少选3题
   Object.keys(byCategory).forEach(cat => {
     const catQuestions = [...byCategory[cat]];
-    // 随机打乱
     catQuestions.sort(() => Math.random() - 0.5);
     
     const minCount = Math.min(3, catQuestions.length);
     for (let i = 0; i < minCount && selected.length < 30; i++) {
       const q = catQuestions[i];
-      // 标准化weight格式（处理德国格式的逗号小数点）
       const weight = normalizeWeight(q.weight);
       
-      // 检查是否还能选这个weight的题目
       if (selectedByWeight[weight] < targetDistribution[weight]) {
         selected.push(q);
         selectedByWeight[weight]++;
@@ -139,13 +115,11 @@ async function selectQuestions() {
     return !selected.find(s => s.id === q.id);
   });
   
-  // 随机打乱剩余题目
   remaining.sort(() => Math.random() - 0.5);
 
   for (const q of remaining) {
     if (selected.length >= 30) break;
     
-    // 标准化weight格式（处理德国格式的逗号小数点）
     const weight = normalizeWeight(q.weight);
     if (selectedByWeight[weight] < targetDistribution[weight]) {
       selected.push(q);
@@ -158,12 +132,10 @@ async function selectQuestions() {
     }
   }
 
-  // 验证：正常情况下应该已经选够30题
   if (selected.length !== 30) {
     throw new Error(`题库异常，请联系作者检查。选题失败：已选${selected.length}题，无法满足30题要求。`);
   }
 
-  // 第三步：随机打乱最终题目顺序
   selected.sort(() => Math.random() - 0.5);
 
   return selected;
@@ -172,4 +144,3 @@ async function selectQuestions() {
 module.exports = {
   selectQuestions
 };
-

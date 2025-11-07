@@ -56,26 +56,60 @@
 }
 
 .feedback-item {
-  margin-bottom: 30rpx;
+  margin-bottom: 20rpx;
 }
 
 .feedback-separator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 40rpx 0;
-}
-
-.separator-line {
-  flex: 1;
-  height: 1rpx;
-  background: #e0e0e0;
+  margin: 20rpx 0;
+  text-align: left;
 }
 
 .separator-text {
-  margin: 0 20rpx;
   font-size: 24rpx;
   color: #999;
+}
+
+.assistant-intro {
+  margin-bottom: 30rpx;
+}
+
+.share-tip-text {
+  display: block;
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 20rpx;
+}
+
+.assistant-title {
+  display: block;
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 20rpx;
+}
+
+.assistant-benefits {
+  padding-left: 20rpx;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 16rpx;
+}
+
+.benefit-bullet {
+  font-size: 28rpx;
+  color: #667eea;
+  margin-right: 12rpx;
+  line-height: 1.6;
+}
+
+.benefit-text {
+  flex: 1;
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
 }
 
 .qrcode-container {
@@ -95,59 +129,41 @@
   color: #999;
 }
 
-.wechat-id-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 30rpx;
-  background: #f9f9f9;
-  border-radius: 12rpx;
-  margin-top: 20rpx;
-}
-
-.wechat-label {
-  font-size: 28rpx;
-  color: #666;
-  margin-right: 10rpx;
-}
-
-.wechat-id {
-  font-size: 28rpx;
-  color: #333;
-  font-weight: 500;
-  margin-right: 20rpx;
-}
-
-.copy-btn {
-  padding: 10rpx 30rpx;
-  background: #667eea;
-  color: #fff;
-  border-radius: 20rpx;
-  font-size: 24rpx;
-  border: none;
-}
-
-.copy-btn::after {
-  border: none;
-}
-
 .action-buttons {
   margin-top: 40rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
 }
 
-.restart-btn {
+.share-btn,
+.home-btn {
   width: 100%;
   height: 88rpx;
   line-height: 88rpx;
-  background: #fff;
-  color: #667eea;
   border-radius: 44rpx;
   font-size: 32rpx;
   font-weight: bold;
   border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0;
 }
 
-.restart-btn::after {
+.share-btn {
+  background: #fff;
+  color: #667eea;
+}
+
+.home-btn {
+  background: rgba(255, 255, 255, 0.8);
+  color: #666;
+}
+
+.share-btn::after,
+.home-btn::after {
   border: none;
 }
 

@@ -2,26 +2,24 @@
 <view class="container" wx:if="{{!loading}}">
   <!-- 总分 -->
   <view class="score-section">
-    <view class="score-label">您的推荐度得分</view>
+    <view class="score-label">{{userNickname}}的德国生存指数</view>
     <view class="score-value">{{totalScore}}</view>
   </view>
 
   <!-- 建议文案 -->
   <view class="recommendation-section">
     <view class="section-title">评估建议</view>
-    <view class="recommendation-text">{{recommendation.text}}</view>
+    <view class="recommendation-text">{{recommendationText}}</view>
   </view>
 
   <!-- 极端反馈 -->
   <view class="feedback-section" wx:if="{{extremeFeedbackList.length > 0}}">
-    <view class="section-title">个性化反馈</view>
+    <view class="section-title">另外</view>
     <view class="feedback-list">
       <block wx:for="{{extremeFeedbackList}}" wx:key="index">
         <view class="feedback-item">{{item}}</view>
         <view class="feedback-separator" wx:if="{{index < extremeFeedbackList.length - 1}}">
-          <view class="separator-line"></view>
-          <text class="separator-text">还有</text>
-          <view class="separator-line"></view>
+          <text class="separator-text">还有👇</text>
         </view>
       </block>
     </view>
@@ -29,25 +27,39 @@
 
   <!-- 引流内容 -->
   <view class="contact-section">
-    <view class="section-title">获取更多信息</view>
+    <view class="section-title">还想再了解下？</view>
     
-    <!-- 公众号二维码 -->
-    <view class="qrcode-container">
-      <image class="qrcode-image" src="{{qrCodeImage}}" mode="aspectFit"></image>
-      <text class="qrcode-tip">长按二维码关注公众号</text>
+    <!-- 小助手介绍 -->
+    <view class="assistant-intro">
+      <text class="share-tip-text">⭐分享可获得额外一次测试机会</text>
+      <text class="assistant-title">🫡添加小助手可以</text>
+      <view class="assistant-benefits">
+        <view class="benefit-item">
+          <text class="benefit-bullet">•</text>
+          <text class="benefit-text">获得更多测试机会</text>
+        </view>
+        <view class="benefit-item">
+          <text class="benefit-bullet">•</text>
+          <text class="benefit-text">为你寻找你工作领域的留德华人</text>
+        </view>
+        <view class="benefit-item">
+          <text class="benefit-bullet">•</text>
+          <text class="benefit-text">预约德国职场咨询（免费15分钟）</text>
+        </view>
+      </view>
     </view>
 
-    <!-- 微信号 -->
-    <view class="wechat-id-container">
-      <text class="wechat-label">微信号：</text>
-      <text class="wechat-id">{{wechatId}}</text>
-      <button class="copy-btn" bindtap="copyWechatId">复制</button>
+    <!-- 小助手二维码 -->
+    <view class="qrcode-container">
+      <image class="qrcode-image" src="{{qrCodeImage}}" mode="aspectFit"></image>
+      <text class="qrcode-tip">长按二维码添加小助手</text>
     </view>
   </view>
 
   <!-- 操作按钮 -->
   <view class="action-buttons">
-    <button class="restart-btn" bindtap="restart">重新答题</button>
+    <button class="share-btn" open-type="share">分享结果</button>
+    <button class="home-btn" bindtap="goHome">回到主页</button>
   </view>
 </view>
 

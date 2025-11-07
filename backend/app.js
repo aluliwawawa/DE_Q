@@ -5,20 +5,18 @@ require('dotenv').config();
 const authRoutes = require('./routes/auth');
 const questionnaireRoutes = require('./routes/questionnaire');
 const responseRoutes = require('./routes/response');
+const shareRoutes = require('./routes/share');
 
 const app = express();
 
-// 中间件
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 健康检查
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: '服务运行正常' });
 });
 
-// 配置检查（开发环境）
 app.get('/api/config/check', async (req, res) => {
   if (process.env.NODE_ENV === 'production') {
     return res.status(403).json({ message: '仅开发环境可用' });
@@ -34,7 +32,6 @@ app.get('/api/config/check', async (req, res) => {
     hasDbPassword: !!process.env.DB_PASSWORD
   };
   
-  // 测试数据库连接
   let dbStatus = 'unknown';
   try {
     await db.query('SELECT 1');
@@ -49,19 +46,17 @@ app.get('/api/config/check', async (req, res) => {
   });
 });
 
-// 路由
 app.use('/api/auth', authRoutes);
 app.use('/api/questionnaire', questionnaireRoutes);
 app.use('/api/responses', responseRoutes);
+app.use('/api/share', shareRoutes);
 
-// 错误处理
 app.use((err, req, res, next) => {
   console.error('Error:', err.message);
   if (process.env.NODE_ENV === 'development') {
     console.error('Stack:', err.stack);
   }
   
-  // 如果是数据库错误，提供更友好的错误信息
   let errorMessage = err.message || '服务器内部错误';
   if (err.code === 'ECONNREFUSED' || err.code === 'ETIMEDOUT') {
     errorMessage = `数据库连接失败: ${err.message}. 请检查数据库服务是否启动，以及.env文件中的数据库配置是否正确。`;

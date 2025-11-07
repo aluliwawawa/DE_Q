@@ -5,10 +5,8 @@ const db = require('../config/database');
 
 const router = express.Router();
 
-// 开发模式测试登录（仅开发环境可用）
 router.post('/dev/login', async (req, res, next) => {
   try {
-    // 仅开发环境可用
     if (process.env.NODE_ENV === 'production') {
       return res.status(403).json({
         code: 403,
@@ -17,7 +15,6 @@ router.post('/dev/login', async (req, res, next) => {
       });
     }
 
-    // 检查必要的环境变量
     if (!process.env.JWT_SECRET) {
       return res.status(500).json({
         code: 500,
@@ -27,9 +24,8 @@ router.post('/dev/login', async (req, res, next) => {
     }
 
     const { nickname } = req.body;
-    const testOpenid = 'dev_test_' + Date.now(); // 生成测试openid
+    const testOpenid = 'dev_test_' + Date.now();
 
-    // 查找或创建测试用户
     let users;
     try {
       [users] = await db.query(
@@ -47,7 +43,6 @@ router.post('/dev/login', async (req, res, next) => {
 
     let user;
     if (users.length === 0) {
-      // 创建新用户
       let result;
       try {
         [result] = await db.query(
@@ -94,7 +89,6 @@ router.post('/dev/login', async (req, res, next) => {
       }
     }
 
-    // 生成JWT token
     const token = jwt.sign(
       { id: user.id, openid: user.openid },
       process.env.JWT_SECRET,
@@ -118,7 +112,6 @@ router.post('/dev/login', async (req, res, next) => {
   }
 });
 
-// 微信登录
 router.post('/wechat/login', async (req, res, next) => {
   try {
     const { code, nickname } = req.body;
@@ -131,7 +124,6 @@ router.post('/wechat/login', async (req, res, next) => {
       });
     }
 
-    // 调用微信接口获取openid
     const wechatResponse = await axios.get('https://api.weixin.qq.com/sns/jscode2session', {
       params: {
         appid: process.env.WECHAT_APPID,
@@ -159,7 +151,6 @@ router.post('/wechat/login', async (req, res, next) => {
       });
     }
 
-    // 查找或创建用户
     let [users] = await db.query(
       'SELECT * FROM users WHERE openid = ?',
       [openid]
@@ -167,7 +158,6 @@ router.post('/wechat/login', async (req, res, next) => {
 
     let user;
     if (users.length === 0) {
-      // 创建新用户
       const [result] = await db.query(
         'INSERT INTO users (openid, nickname) VALUES (?, ?)',
         [openid, nickname || null]
@@ -175,7 +165,6 @@ router.post('/wechat/login', async (req, res, next) => {
       [users] = await db.query('SELECT * FROM users WHERE id = ?', [result.insertId]);
       user = users[0];
     } else {
-      // 更新昵称（如果有变化）
       user = users[0];
       if (nickname && user.nickname !== nickname) {
         await db.query(
@@ -186,7 +175,6 @@ router.post('/wechat/login', async (req, res, next) => {
       }
     }
 
-    // 检查必要的环境变量
     if (!process.env.JWT_SECRET) {
       return res.status(500).json({
         code: 500,
@@ -195,7 +183,6 @@ router.post('/wechat/login', async (req, res, next) => {
       });
     }
 
-    // 生成JWT token
     const token = jwt.sign(
       { id: user.id, openid: user.openid },
       process.env.JWT_SECRET,

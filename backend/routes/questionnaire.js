@@ -1,23 +1,23 @@
 const express = require('express');
 const db = require('../config/database');
 const authMiddleware = require('../middleware/auth');
-const { checkDailyLimit } = require('../services/scoring');
+const { checkAnswerLimit } = require('../services/scoring');
 const { selectQuestions } = require('../services/questionSelector');
 
 const router = express.Router();
 
-// 检查答题权限（需要登录）
 router.get('/check-permission', authMiddleware, async (req, res, next) => {
   try {
-    const { openid } = req.user;
-    const canAnswer = await checkDailyLimit(openid);
+    const { openid, id: userId } = req.user;
+    const limitCheck = await checkAnswerLimit(openid, userId);
     
     res.json({
       code: 0,
-      message: canAnswer ? '可以答题' : '您今天已经答过题了，请明天再来',
+      message: limitCheck.message,
       data: {
-        canAnswer,
-        message: canAnswer ? '可以开始答题' : '您今天已经答过题了，请明天再来'
+        canAnswer: limitCheck.canAnswer,
+        remaining: limitCheck.remaining,
+        message: limitCheck.message
       }
     });
   } catch (error) {
@@ -25,22 +25,19 @@ router.get('/check-permission', authMiddleware, async (req, res, next) => {
   }
 });
 
-// 获取当前问卷（需要登录）
 router.get('/current', authMiddleware, async (req, res, next) => {
   try {
-    const { openid } = req.user;
+    const { openid, id: userId } = req.user;
     
-    // 检查每日答题限制
-    const canAnswer = await checkDailyLimit(openid);
-    if (!canAnswer) {
+    const limitCheck = await checkAnswerLimit(openid, userId);
+    if (!limitCheck.canAnswer) {
       return res.status(403).json({
         code: 403,
-        message: '您今天已经答过题了，请明天再来',
+        message: limitCheck.message,
         data: null
       });
     }
 
-    // 智能选题：选择30道题
     const questions = await selectQuestions();
 
     res.json({
@@ -48,7 +45,6 @@ router.get('/current', authMiddleware, async (req, res, next) => {
       message: '获取成功',
       data: {
         questions: questions.map(q => {
-          // 处理德国格式的逗号小数点
           const weightStr = String(q.weight).replace(',', '.');
           return {
             id: q.id,

@@ -1,4 +1,3 @@
-// API请求工具
 const config = require('../config');
 
 function request(url, method = 'GET', data = {}) {
@@ -22,7 +21,6 @@ function request(url, method = 'GET', data = {}) {
             reject(new Error(res.data.message || '请求失败'));
           }
         } else {
-          // 对于非200状态码，尝试获取错误信息
           const errorMsg = res.data?.message || `HTTP ${res.statusCode}`;
           reject(new Error(errorMsg));
         }
@@ -34,7 +32,6 @@ function request(url, method = 'GET', data = {}) {
   });
 }
 
-// 开发模式登录（仅开发环境）
 function devLogin(nickname = '测试用户') {
   return new Promise((resolve, reject) => {
     request('/auth/dev/login', 'POST', {
@@ -50,17 +47,14 @@ function devLogin(nickname = '测试用户') {
   });
 }
 
-// 微信登录
 function wechatLogin() {
   return new Promise((resolve, reject) => {
     wx.login({
       success(res) {
         if (res.code) {
-          // 获取用户信息
           wx.getUserProfile({
             desc: '用于完善用户资料',
             success(userRes) {
-              // 调用后端登录接口
               request('/auth/wechat/login', 'POST', {
                 code: res.code,
                 nickname: userRes.userInfo.nickName
@@ -84,14 +78,18 @@ function wechatLogin() {
   });
 }
 
-// 检查答题权限
 function checkAnswerPermission() {
   return request('/questionnaire/check-permission', 'GET');
+}
+
+function shareReward() {
+  return request('/share/reward', 'POST');
 }
 
 module.exports = {
   request,
   devLogin,
   wechatLogin,
-  checkAnswerPermission
+  checkAnswerPermission,
+  shareReward
 };

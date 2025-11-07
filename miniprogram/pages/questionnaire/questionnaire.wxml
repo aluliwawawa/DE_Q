@@ -1,43 +1,52 @@
-<!--pages/questionnaire/questionnaire.wxml-->
 <view class="container" wx:if="{{!loading}}">
-  <!-- 进度条 -->
-  <view class="progress-container">
+  <view class="progress-section">
     <view class="progress-bar">
-      <view class="progress-fill" style="width: {{(currentIndex + 1) / questions.length * 100}}%"></view>
+      <view class="progress-fill" style="width: {{progressPercent}}%"></view>
     </view>
-    <text class="progress-text">{{currentIndex + 1}}/{{questions.length}}</text>
+    <view class="progress-info">
+      <text class="progress-text">第 {{currentIndex + 1}} 题 / 共 {{questions.length}} 题</text>
+    </view>
   </view>
 
-  <!-- 题目 -->
-  <view class="question-container">
-    <view class="question-text">{{questions[currentIndex].text}}</view>
-    
-    <!-- 选项 -->
+  <view class="question-card">
+    <view class="question-header">
+      <view class="question-badge">题目 {{currentIndex + 1}}</view>
+    </view>
+    <view class="question-text">{{currentQuestion.text}}</view>
+  </view>
+  
+  <view class="options-container">
+    <view class="options-title">请选择符合程度：</view>
     <view class="options">
       <view 
-        class="option-item {{answers[currentIndex] === index + 1 ? 'selected' : ''}}"
+        class="option-item {{currentAnswer === index + 1 ? 'selected' : ''}}"
         wx:for="{{[1,2,3,4,5]}}" 
         wx:key="*this"
         wx:for-index="index"
         data-index="{{index}}"
         bindtap="selectAnswer"
       >
-        <text class="option-number">{{index + 1}}</text>
-        <text class="option-label">{{item === 1 ? '完全不符合' : item === 2 ? '不太符合' : item === 3 ? '一般' : item === 4 ? '比较符合' : '完全符合'}}</text>
+        <view class="option-circle">
+          <text class="option-number">{{index + 1}}</text>
+        </view>
+        <view class="option-content">
+          <text class="option-label">{{item === 1 ? '完全不符合' : item === 2 ? '不太符合' : item === 3 ? '一般' : item === 4 ? '比较符合' : '完全符合'}}</text>
+        </view>
       </view>
     </view>
   </view>
 
-  <!-- 导航按钮 -->
-  <view class="nav-buttons">
+  <view class="nav-section">
     <button 
       class="nav-btn prev-btn" 
       disabled="{{currentIndex === 0}}"
       bindtap="prevQuestion"
-    >上一题</button>
+    >
+      上一题
+    </button>
   </view>
 </view>
 
 <view class="loading" wx:else>
-  <text>加载中...</text>
+  <text class="loading-text">加载题目中...</text>
 </view>
